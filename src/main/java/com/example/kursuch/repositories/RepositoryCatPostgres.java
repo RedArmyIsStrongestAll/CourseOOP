@@ -1,10 +1,12 @@
 package com.example.kursuch.repositories;
 
 import com.example.kursuch.models.Cat;
+import com.example.kursuch.otherTools.Color;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,15 +34,10 @@ public class RepositoryCatPostgres implements Repository<Cat> {
     @Override
     public Optional<Cat> read(long id) {
 
-        /*Optional result = Optional.of( em.createNativeQuery("Select *" +
-                                                            "From cats" +
-                                                            "WHERE id = 1", Cat.class)
-                .getSingleResult() );*/
-
-        Optional result = Optional.of(em.createQuery("SELECT cat from cats cat where cat.id = ?1", Cat.class)
+        Optional result = Optional.of(em.createNativeQuery("SELECT * FROM cats WHERE id = ?1", Cat.class)
                 .setParameter(1, id)
                 .getSingleResult());
-
+        Object res = result.get();
         return result;
     }
 
@@ -48,26 +45,23 @@ public class RepositoryCatPostgres implements Repository<Cat> {
     @Transactional
     public Optional<List<Cat>> readAll() {
 
-        Optional result = Optional.of(em.createNativeQuery("SELECT *" +
-                                                                "FROM cats", Cat.class)
-                .getResultList() );
-
+        Optional result = Optional.of(em.createNativeQuery("SELECT * FROM cats", Cat.class)
+                .getResultList());
         return result;
     }
 
     @Override
+    @Transactional
     public void update(long id, Cat obj) {
-        if (readAll().orElse(null) != null) {
-            List<Cat> listCat = readAll().orElse(null);
-            listCat.stream().filter(cat -> cat.getId() == id)
-                    .peek(cat -> {
-                        cat.setName(obj.getName());
-                        cat.setNameFeline(obj.getNameFeline());
-                        cat.setColor(obj.getColor());
-                        cat.setParod(obj.getParod());
-                        create(cat);
-                    });
-        }
+
+            em.createNativeQuery("UPDATE cats SET name = ?2, feline_name = ?3, parod =?4, color = ?5 WHERE id = ?1", Cat.class)
+                    .setParameter(1, id)
+                    .setParameter(2, obj.getName())
+                    .setParameter(3, obj.getNameFeline())
+                    .setParameter(4, obj.getParod())
+                    .setParameter(5, checkColor(obj))
+                    .executeUpdate();
+
     }
 
     @Override

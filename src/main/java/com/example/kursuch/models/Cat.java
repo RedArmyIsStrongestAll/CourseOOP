@@ -4,11 +4,11 @@ import com.example.kursuch.otherTools.Color;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 @Entity(name="cats")
 @Data
@@ -27,7 +27,19 @@ public class Cat {
     private String nameFeline;
 
     @Column(name="color")
+    /*@Type()*/
     private Color color;
+
+    public void setColor(String color) {
+        this.color = Color.fromString(color);
+    }
+
+   /* public void setColor(Color color) {
+        this.color = color;
+    }*/
+
+    @Column(name="parod")
+    private String parod;
 
     public boolean isEmptyColor(){
         if (this.color != null){
@@ -38,7 +50,12 @@ public class Cat {
         }
     }
 
-    @Column(name="parod")
-    private String parod;
+    public Cat (long id, String name, String nameFeline, String color, String parod){
+        this.id = id;
+        this.name = name;
+        this.nameFeline = nameFeline;
+        this.color = Color.fromString(color);
+        this.parod = parod;
+    }
 
 }

@@ -22,18 +22,30 @@ public class RestController {
     @PostMapping("/")
     public void methodPost(@RequestBody Cat cat){
         try {
+            /*cat.setColor(Color.ORANGE);*/
             rep.create(cat);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    @GetMapping("/{id}")
-    public Object methodPost(@PathVariable(name = "id") long id){
+    /*@GetMapping("/{id}")
+    public Object methodPut(@PathVariable(name = "id") long id){
         try {
             Cat cat = new Cat(1,"asd", "asd", Color.BLACK, "sdasd");
             rep.update(id, cat);
-            return rep.readAll().orElse(null);
+            //return rep.readAll().orElse(null);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }*/
+
+    @GetMapping("/{id}")
+    public Object methodGetOne(@PathVariable(name = "id") long id){
+        try {
+            return rep.read(id);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -41,7 +53,7 @@ public class RestController {
     }
 
     @GetMapping("/")
-    public Object methodGet(){
+    public Object methodGetAll(){
         try {
             return rep.readAll().orElse(null);
         } catch (Exception e) {
