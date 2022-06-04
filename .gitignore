@@ -5,7 +5,6 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-src/main/java/com/example/kursuch/test.class
 
 ### STS ###
 .apt_generated

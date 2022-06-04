@@ -1,6 +1,6 @@
 package com.example.kursuch.models;
 
-import com.example.kursuch.otherTools.Color;
+import com.example.kursuch.customType.color.Color;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,20 +26,12 @@ public class Cat {
     @Column(name="feline_name")
     private String nameFeline;
 
-    @Column(name="color")
-    /*@Type()*/
-    private Color color;
-
-    public void setColor(String color) {
-        this.color = Color.fromString(color);
-    }
-
-   /* public void setColor(Color color) {
-        this.color = color;
-    }*/
-
     @Column(name="parod")
     private String parod;
+
+    @Column(name="color")
+    @Type(type ="com.example.kursuch.customType.color.ColorEnumType")
+    private Color color;
 
     public boolean isEmptyColor(){
         if (this.color != null){
@@ -48,14 +40,6 @@ public class Cat {
         else {
             return true;
         }
-    }
-
-    public Cat (long id, String name, String nameFeline, String color, String parod){
-        this.id = id;
-        this.name = name;
-        this.nameFeline = nameFeline;
-        this.color = Color.fromString(color);
-        this.parod = parod;
     }
 
 }

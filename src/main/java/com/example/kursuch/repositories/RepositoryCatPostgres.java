@@ -1,15 +1,12 @@
 package com.example.kursuch.repositories;
 
 import com.example.kursuch.models.Cat;
-import com.example.kursuch.otherTools.Color;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.transaction.Transactional;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @org.springframework.stereotype.Repository
 public class RepositoryCatPostgres implements Repository<Cat> {
@@ -28,6 +25,7 @@ public class RepositoryCatPostgres implements Repository<Cat> {
                 .setParameter(3, checkColor(obj)) //color
                 .setParameter(4, obj.getParod()) //parod
                 .executeUpdate();
+
     }
 
     @Transactional
@@ -39,6 +37,7 @@ public class RepositoryCatPostgres implements Repository<Cat> {
                 .getSingleResult());
         Object res = result.get();
         return result;
+
     }
 
     @Override
@@ -48,24 +47,30 @@ public class RepositoryCatPostgres implements Repository<Cat> {
         Optional result = Optional.of(em.createNativeQuery("SELECT * FROM cats", Cat.class)
                 .getResultList());
         return result;
+
     }
 
     @Override
     @Transactional
     public void update(long id, Cat obj) {
 
-            em.createNativeQuery("UPDATE cats SET name = ?2, feline_name = ?3, parod =?4, color = ?5 WHERE id = ?1", Cat.class)
-                    .setParameter(1, id)
-                    .setParameter(2, obj.getName())
-                    .setParameter(3, obj.getNameFeline())
-                    .setParameter(4, obj.getParod())
-                    .setParameter(5, checkColor(obj))
-                    .executeUpdate();
+        em.createNativeQuery("UPDATE cats SET name = ?2, feline_name = ?3, parod =?4, color = ?5 WHERE id = ?1")
+                .setParameter(1, id)
+                .setParameter(2, obj.getName())
+                .setParameter(3, obj.getNameFeline())
+                .setParameter(4, obj.getParod())
+                .setParameter(5, checkColor(obj))
+                .executeUpdate();
 
     }
 
     @Override
+    @Transactional
     public void delete(long id) {
+
+        em.createNativeQuery("DELETE FROM cats WHERE id = ?")
+                .setParameter(1, id)
+                .executeUpdate();
 
     }
 
