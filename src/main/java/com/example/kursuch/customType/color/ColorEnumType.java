@@ -41,12 +41,14 @@ public class ColorEnumType implements UserType {
     @Override
     //ПЕРВЫЙ ПРИ ИЗВЛЕЧЕНИИ
     public Object nullSafeGet(ResultSet resultSet, String[] strings, SharedSessionContractImplementor sharedSessionContractImplementor, Object o) throws HibernateException, SQLException {
-        Object checkNull = resultSet.getObject("color");
+        Object checkNull = resultSet.getObject(strings[0]);
+        String test = resultSet.getString(strings[0]);
         if (checkNull == null) {
             return Color.NO;
         } else {
             String value = StringType.INSTANCE.nullSafeGet(resultSet, strings[0], sharedSessionContractImplementor);
             Color colorOutput = Color.fromString(value);
+            System.out.println("зашёл в десериализацию глубокую, colorOutput: " + value);
             return colorOutput;
         }
     }

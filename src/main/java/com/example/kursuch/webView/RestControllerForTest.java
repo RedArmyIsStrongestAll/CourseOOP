@@ -30,11 +30,7 @@ public class RestControllerForTest {
     @GetMapping("/{id}")
     public Object methodGetOne(@PathVariable(name = "id") long id){
         Cat cat = rep.read(id).get();
-
-        System.out.println(rep.read(id));
-        System.out.println(rep.read(id).get());
         System.out.println(cat);
-
         return rep.read(id).get();
     }
 
