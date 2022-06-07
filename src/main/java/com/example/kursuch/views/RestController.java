@@ -1,4 +1,4 @@
-package com.example.kursuch.webView;
+package com.example.kursuch.views;
 
 import com.example.kursuch.customType.color.Color;
 import com.example.kursuch.models.Cat;
@@ -6,9 +6,9 @@ import com.example.kursuch.repositories.RepositoryCat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-/*@org.springframework.web.bind.annotation.RestController*/
+//@org.springframework.web.bind.annotation.RestController
 public class RestController {
-    final RepositoryCat rep;
+   /* final RepositoryCat rep;
 
     @Autowired
     public RestController(RepositoryCat rep) {
@@ -40,5 +40,5 @@ public class RestController {
     @DeleteMapping("/{id}")
     public void methodDelet(@PathVariable(name = "id") long id){
         rep.delete(id);
-    }
+    }*/
 }

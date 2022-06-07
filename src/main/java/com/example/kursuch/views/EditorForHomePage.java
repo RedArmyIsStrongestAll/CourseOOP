@@ -1,12 +1,15 @@
-package com.example.kursuch.webView;
+package com.example.kursuch.views;
 
 import com.example.kursuch.customType.color.Color;
 import com.example.kursuch.models.Cat;
+import com.example.kursuch.services.ServicesCat;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
@@ -22,7 +25,7 @@ import org.springframework.stereotype.Component;
 @UIScope
 public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
 
-    //тут должен быть сервис
+    private final ServicesCat service;
     private Cat cat;
 
     @PropertyId("name")
@@ -31,6 +34,7 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     TextField felineNameTextField;
     @PropertyId("parod")
     TextField parodTextField;
+    @PropertyId("color")
     ComboBox<Color> colorComboBox;
 
 
@@ -38,7 +42,7 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     Button cancel = new Button("Отмена", VaadinIcon.ARROW_BACKWARD.create());
     Button delete = new Button("Удалить", VaadinIcon.TRASH.create());
 
-    Binder<Cat> binder= new Binder<>(Cat.class);
+    Binder<Cat> binder = new Binder<>(Cat.class);
 
     @Setter
     ChangeHandler change; //поробуй потом нахуй удалить
@@ -48,32 +52,33 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     }
 
     @Autowired
-    public EditorForHomePage() {
+    public EditorForHomePage(ServicesCat service) {
+        System.out.println("загрузка формы edit");
+        binder.setBean(cat);
+
+        this.service = service;
 
         setVisible(false);
 
         //setup update-create form
         nameTextField = new TextField("Имя");
+        nameTextField.getElement().setAttribute("autocomplete","off");
         felineNameTextField = new TextField("Имя на кошачьем");
+        felineNameTextField.getElement().setAttribute("autocomplete","off");
         parodTextField = new TextField("Парода");
+        parodTextField.getElement().setAttribute("autocomplete","off");
         colorComboBox = new ComboBox<>("Цвет");
         colorComboBox.setItems(Color.arrColor);
         colorComboBox.setItemLabelGenerator(Color::getTitle);
         //
-        binder.forField(nameTextField).bind(Cat::getName,Cat::setName);
-        binder.forField(felineNameTextField).bind(Cat::getNameFeline,Cat::setNameFeline);
-        binder.forField(parodTextField).bind(Cat::getParod,Cat::setParod);
-        binder.forField(colorComboBox).bind(Cat::getColor, Cat::setColor);
-        binder.readBean(cat);
+        binder.bindInstanceFields(this);
         //
-        save = new Button("Сохарнить", VaadinIcon.CHECK.create());
         cancel = new Button("Отмена", VaadinIcon.ARROW_BACKWARD.create());
+        cancel.addClickListener(e -> setVisible(false));
         delete = new Button("Удалить", VaadinIcon.TRASH.create());
-        HorizontalLayout divAction = new HorizontalLayout(save, cancel, delete);
-        addKeyPressListener(Key.ENTER, e -> save());
-        save.addClickListener(e -> save());
         delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editCat(cat));
+        save = new Button("Сохарнить", VaadinIcon.CHECK.create());
+        HorizontalLayout divAction = new HorizontalLayout(save, cancel, delete);
 
         //setup style
         setSpacing(true);
@@ -81,33 +86,63 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         delete.getElement().getThemeList().add("error");
 
         add(nameTextField, felineNameTextField, colorComboBox, parodTextField, divAction);
+
     }
 
     private void save() {
 
-        //repository.create(cat);
-        change.onChange();
+        try {
+            System.out.println("create save()");
+            service.create(cat);
+            change.onChange();
+        } catch (Exception e) {
+            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        }
+    }
+
+    private void update() {
+
+        try {
+            long id = cat.getId();
+            System.out.println("update update()");
+            service.update(id, cat);
+            change.onChange();
+        } catch (Exception e) {
+            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        }
     }
 
     private void delete() {
-        //repository.delete(cat.getId());
 
-        change.onChange();
+        try {
+            long id = cat.getId();
+            service.delete(id);
+            change.onChange();
+        } catch (Exception e) {
+            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        }
     }
 
     public void editCat(Cat selectCat) {
 
-        if (selectCat != null) {
-            //update cate
-            //находи по id кота на которого нажали, чтобы получить его экземпляр
-            binder.setBean(this.cat);
-        } else {
-            //create cat
-            cat = new Cat();
-            binder.setBean(this.cat);
-        }
-
         setVisible(true);
-        nameTextField.focus();
+
+        //existing
+        if(selectCat != null){
+            long id = selectCat.getId();
+            cat = service.read(id);
+
+            addKeyPressListener(Key.ENTER, e -> {update();
+                        System.out.println("update enter");});
+            save.addClickListener(e -> update());
+        }
+        //new
+        if (selectCat == null){
+            cat = new Cat();
+
+            addKeyPressListener(Key.ENTER, e -> save());
+            save.addClickListener(e -> {save();
+                System.out.println("save enter");});
+        }
     }
 }

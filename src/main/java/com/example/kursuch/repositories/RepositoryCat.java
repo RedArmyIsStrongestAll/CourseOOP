@@ -9,10 +9,22 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Repository
-public class RepositoryCat implements Repository<Cat> {
+public class RepositoryCat implements RepositoryCRUD<Cat>, RepositorySearchByName<Cat> {
 
     @PersistenceContext
     EntityManager em;
+
+    @Override
+    @Transactional
+    public List<Cat> searchByNames(String search){
+
+        List result = em.createNativeQuery("SELECT * FROM cats " +
+                        "WHERE name LIKE ?1 OR feline_name LIKE ?2", Cat.class)
+                .setParameter(1, search + "%")
+                .setParameter(2, search + "%")
+                .getResultList();
+        return result;
+    }
 
     @Transactional
     @Override
@@ -25,29 +37,25 @@ public class RepositoryCat implements Repository<Cat> {
                 .setParameter(3, checkColor(obj)) //color
                 .setParameter(4, obj.getParod()) //parod
                 .executeUpdate();
-
     }
 
     @Transactional
     @Override
-    public Optional<Cat> read(long id) {
+    public Cat read(long id) {
 
-        Optional result = Optional.of(em.createNativeQuery("SELECT * FROM cats WHERE id = ?1", Cat.class)
+        Object cat = em.createNativeQuery("SELECT * FROM cats WHERE id = ?1", Cat.class)
                 .setParameter(1, id)
-                .getSingleResult());
-        Object res = result.get();
-        return result;
-
+                .getSingleResult();
+        return (Cat) cat;
     }
 
     @Override
     @Transactional
-    public Optional<List<Cat>> readAll() {
+    public List<Cat> readAll() {
 
-        Optional result = Optional.of(em.createNativeQuery("SELECT * FROM cats", Cat.class)
-                .getResultList());
-        return result;
-
+        List cats = em.createNativeQuery("SELECT * FROM cats", Cat.class)
+                .getResultList();
+        return cats;
     }
 
     @Override
@@ -61,7 +69,6 @@ public class RepositoryCat implements Repository<Cat> {
                 .setParameter(4, obj.getParod())
                 .setParameter(5, checkColor(obj))
                 .executeUpdate();
-
     }
 
     @Override
@@ -71,7 +78,6 @@ public class RepositoryCat implements Repository<Cat> {
         em.createNativeQuery("DELETE FROM cats WHERE id = ?")
                 .setParameter(1, id)
                 .executeUpdate();
-
     }
 
     private Object checkColor(Cat obj){
