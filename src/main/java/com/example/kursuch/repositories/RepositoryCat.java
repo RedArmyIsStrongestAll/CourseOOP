@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @org.springframework.stereotype.Repository
-public class RepositoryCatPostgres implements Repository<Cat> {
+public class RepositoryCat implements Repository<Cat> {
 
     @PersistenceContext
     EntityManager em;
@@ -75,6 +75,7 @@ public class RepositoryCatPostgres implements Repository<Cat> {
     }
 
     private Object checkColor(Cat obj){
-        return  (obj.isEmptyColor()) ? null : obj.getColor().getTitle() ;
+        //to avoid colling .getColor() from null
+        return  (obj.getColor() == null) ? null : obj.getColor().getTitle() ;
     }
 }

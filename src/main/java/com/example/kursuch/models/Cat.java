@@ -30,16 +30,6 @@ public class Cat {
     private String parod;
 
     @Column(name="color")
-    @Type(type ="com.example.kursuch.customType.color.ColorEnumType")
+    @Type(type = "com.example.kursuch.customType.color.ColorType")
     private Color color;
-
-    public boolean isEmptyColor(){
-        if (this.color != null){
-            return false;
-        }
-        else {
-            return true;
-        }
-    }
-
 }

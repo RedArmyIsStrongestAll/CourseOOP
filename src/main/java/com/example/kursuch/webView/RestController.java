@@ -2,16 +2,16 @@ package com.example.kursuch.webView;
 
 import com.example.kursuch.customType.color.Color;
 import com.example.kursuch.models.Cat;
-import com.example.kursuch.repositories.RepositoryCatPostgres;
+import com.example.kursuch.repositories.RepositoryCat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-@org.springframework.web.bind.annotation.RestController
-public class RestControllerForTest {
-    final RepositoryCatPostgres rep;
+/*@org.springframework.web.bind.annotation.RestController*/
+public class RestController {
+    final RepositoryCat rep;
 
     @Autowired
-    public RestControllerForTest(RepositoryCatPostgres rep) {
+    public RestController(RepositoryCat rep) {
         this.rep = rep;
     }
 
@@ -29,8 +29,6 @@ public class RestControllerForTest {
 
     @GetMapping("/{id}")
     public Object methodGetOne(@PathVariable(name = "id") long id){
-        Cat cat = rep.read(id).get();
-        System.out.println(cat);
         return rep.read(id).get();
     }
 

@@ -30,7 +30,7 @@ public enum Color {
     @Getter
     private String title;
 
-    private static Color [] arrColor = Color.values();
+    public static Color [] arrColor = Color.values();
 
 
     public static Color fromString(String colorTitle){
