@@ -62,6 +62,7 @@ public class HomePage extends VerticalLayout {
         });
 
         //setup searchTextField
+        textFieldSearch.getElement().setAttribute("autocomplete", "off");
         textFieldSearch.setValueChangeMode(ValueChangeMode.EAGER);
         textFieldSearch.addValueChangeListener(field -> sortingView(field.getValue()));
 
