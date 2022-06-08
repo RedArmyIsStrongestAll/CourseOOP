@@ -19,12 +19,15 @@ public class Cat {
     private long id;
 
     @Column(name="name")
+    @Type(type = "com.example.kursuch.customType.StringFillingNullType")
     private String name;
 
     @Column(name="feline_name")
+    @Type(type = "com.example.kursuch.customType.StringFillingNullType")
     private String nameFeline;
 
     @Column(name="parod")
+    @Type(type = "com.example.kursuch.customType.StringFillingNullType")
     private String parod;
 
     @Column(name="color")

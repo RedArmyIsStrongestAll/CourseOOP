@@ -57,6 +57,7 @@ public class HomePage extends VerticalLayout {
         grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addItemDoubleClickListener(event -> {
             Cat cat = event.getItem();
+            service.returnNullValues(cat);
             editor.editCat(cat);
         });
 

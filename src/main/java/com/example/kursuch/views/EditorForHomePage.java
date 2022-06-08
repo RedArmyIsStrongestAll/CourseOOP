@@ -70,7 +70,14 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         parodTextField.getElement().setAttribute("autocomplete", "off");
         colorComboBox = new ComboBox<>("Цвет");
         colorComboBox.setItems(Color.arrColor);
-        colorComboBox.setItemLabelGenerator(Color::getTitle);
+        colorComboBox.setItemLabelGenerator(i -> {
+            if(i == null){
+                return "";
+            }
+            else {
+                return i.getTitle();
+            }
+        });
         //
         binder.bindInstanceFields(this);
         //
@@ -134,7 +141,7 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         Notification notification = new Notification();
         notification.setPosition(com.vaadin.flow.component.notification.Notification.Position.BOTTOM_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-        notification.setDuration(500);
+        notification.setDuration(5000);
         //
         Div divText = new Div(new Text(test));
         //

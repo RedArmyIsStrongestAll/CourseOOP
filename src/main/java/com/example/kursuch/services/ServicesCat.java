@@ -1,5 +1,6 @@
 package com.example.kursuch.services;
 
+import com.example.kursuch.customType.color.Color;
 import com.example.kursuch.models.Cat;
 import com.example.kursuch.repositories.RepositoryCat;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,8 +74,23 @@ public class ServicesCat implements ServiceForCRUD<Cat>, ServiceForSearch<Cat>{
     }
 
     private boolean checkNoValidityName(Cat cat){
-        boolean firstName = cat.getName() != "" && cat.getName() != null;
-        boolean secondName = cat.getNameFeline() != "" && cat.getNameFeline() != null;
+        boolean firstName = cat.getName() != "";
+        boolean secondName = cat.getNameFeline() != "";
         return !(firstName || secondName);
+    }
+
+    public void returnNullValues (Cat cat){
+        if ((cat.getName()).equals("неизвестно")){
+            cat.setName(null);
+        }
+        if ((cat.getNameFeline()).equals("неизвестно")){
+            cat.setNameFeline(null);
+        }
+        if ((cat.getParod()).equals("неизвестно")){
+            cat.setParod(null);
+        }
+        if (cat.getColor() == Color.NO){
+            cat.setColor(null);
+        }
     }
 }

@@ -21,7 +21,7 @@ public enum Color {
 
     BLACK ("чёрный"),
 
-    NO ("");
+    NO ("неизвестно");
 
     Color (String title){
         this.title = title;
