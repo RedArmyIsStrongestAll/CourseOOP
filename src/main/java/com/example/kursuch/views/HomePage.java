@@ -35,6 +35,10 @@ public class HomePage extends VerticalLayout {
 
         //setup update form
         this.editor = editor;
+        editor.setChange(() -> {
+            editor.setVisible(false);
+            sortingView(textFieldSearch.getValue());
+        });
 
         //setup toolPanel
         textFieldSearch = new TextField("", "Поиск");
@@ -45,24 +49,15 @@ public class HomePage extends VerticalLayout {
         grid = new Grid<>();
         grid.addColumn(Cat::getId).setHeader("Id").setSortable(true);
         grid.addColumn(Cat::getName).setHeader("Имя").setSortable(true);
-        grid.addColumn(Cat::getNameFeline).setHeader("Имя на кошаьем").setSortable(true);
+        grid.addColumn(Cat::getNameFeline).setHeader("Имя на кошачьем").setSortable(true);
         grid.addColumn((Cat cat) -> cat.getColor().getTitle()).setHeader("Цвет шёрстки").setSortable(true);
         grid.addColumn(Cat::getParod).setHeader("Парода").setSortable(true);
         //
-        /*grid.setSelectionMode(Grid.SelectionMode.SINGLE);
+        grid.setSelectionMode(Grid.SelectionMode.SINGLE);
         grid.addItemDoubleClickListener(event -> {
             Cat cat = event.getItem();
             editor.editCat(cat);
-            System.out.println("send cat");
-        });*/
-        grid.asSingleSelect()
-                .addValueChangeListener(event -> {
-                    Cat cat = event.getValue();
-                    if (cat != null) {
-                        editor.editCat(cat);
-                        System.out.println("send cat  " + cat);
-                    }
-                });
+        });
 
         //setup searchTextField
         textFieldSearch.setValueChangeMode(ValueChangeMode.EAGER);
@@ -70,14 +65,7 @@ public class HomePage extends VerticalLayout {
 
         //setup addNewCatButton
         buttonAddNewCat.addClickListener(e -> {
-            editor.editCat(null);
-            System.out.println("send null");
-        });
-
-        //setup instruction for update data
-        editor.setChange(() -> {
-            editor.setVisible(false);
-            sortingView(textFieldSearch.getValue());
+            editor.editCat(new Cat());
         });
 
         add(toolsPanel, grid, editor);

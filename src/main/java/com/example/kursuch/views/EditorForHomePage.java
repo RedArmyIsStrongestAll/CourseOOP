@@ -47,14 +47,13 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     @Setter
     ChangeHandler change; //поробуй потом нахуй удалить
 
-    public interface ChangeHandler{
+    public interface ChangeHandler {
         void onChange();
     }
 
     @Autowired
     public EditorForHomePage(ServicesCat service) {
         System.out.println("загрузка формы edit");
-        binder.setBean(cat);
 
         this.service = service;
 
@@ -62,11 +61,11 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
 
         //setup update-create form
         nameTextField = new TextField("Имя");
-        nameTextField.getElement().setAttribute("autocomplete","off");
+        nameTextField.getElement().setAttribute("autocomplete", "off");
         felineNameTextField = new TextField("Имя на кошачьем");
-        felineNameTextField.getElement().setAttribute("autocomplete","off");
+        felineNameTextField.getElement().setAttribute("autocomplete", "off");
         parodTextField = new TextField("Парода");
-        parodTextField.getElement().setAttribute("autocomplete","off");
+        parodTextField.getElement().setAttribute("autocomplete", "off");
         colorComboBox = new ComboBox<>("Цвет");
         colorComboBox.setItems(Color.arrColor);
         colorComboBox.setItemLabelGenerator(Color::getTitle);
@@ -78,6 +77,8 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         delete = new Button("Удалить", VaadinIcon.TRASH.create());
         delete.addClickListener(e -> delete());
         save = new Button("Сохарнить", VaadinIcon.CHECK.create());
+        save.addClickListener(e -> save());
+        addKeyPressListener(Key.ENTER, e -> save());
         HorizontalLayout divAction = new HorizontalLayout(save, cancel, delete);
 
         //setup style
@@ -91,21 +92,15 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
 
     private void save() {
 
-        try {
-            System.out.println("create save()");
-            service.create(cat);
-            change.onChange();
-        } catch (Exception e) {
-            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
-        }
-    }
-
-    private void update() {
+        boolean existing = cat.getId() != 0;
 
         try {
-            long id = cat.getId();
-            System.out.println("update update()");
-            service.update(id, cat);
+            if(existing){
+                service.update(cat.getId(), cat);
+            }
+            else{
+                service.create(cat);
+            }
             change.onChange();
         } catch (Exception e) {
             Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
@@ -125,24 +120,14 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
 
     public void editCat(Cat selectCat) {
 
+        if (selectCat == null) {
+            setVisible(false);
+            return;
+        }
+
+        this.cat = selectCat;
+        binder.setBean(cat);
+
         setVisible(true);
-
-        //existing
-        if(selectCat != null){
-            long id = selectCat.getId();
-            cat = service.read(id);
-
-            addKeyPressListener(Key.ENTER, e -> {update();
-                        System.out.println("update enter");});
-            save.addClickListener(e -> update());
-        }
-        //new
-        if (selectCat == null){
-            cat = new Cat();
-
-            addKeyPressListener(Key.ENTER, e -> save());
-            save.addClickListener(e -> {save();
-                System.out.println("save enter");});
-        }
     }
 }
