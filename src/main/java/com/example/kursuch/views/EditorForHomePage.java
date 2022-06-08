@@ -5,8 +5,12 @@ import com.example.kursuch.models.Cat;
 import com.example.kursuch.services.ServicesCat;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
@@ -37,7 +41,6 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     @PropertyId("color")
     ComboBox<Color> colorComboBox;
 
-
     Button save = new Button("Сохарнить", VaadinIcon.CHECK.create());
     Button cancel = new Button("Отмена", VaadinIcon.ARROW_BACKWARD.create());
     Button delete = new Button("Удалить", VaadinIcon.TRASH.create());
@@ -51,10 +54,9 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         void onChange();
     }
 
+
     @Autowired
     public EditorForHomePage(ServicesCat service) {
-        System.out.println("загрузка формы edit");
-
         this.service = service;
 
         setVisible(false);
@@ -91,9 +93,7 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
     }
 
     private void save() {
-
         boolean existing = cat.getId() != 0;
-
         try {
             if(existing){
                 service.update(cat.getId(), cat);
@@ -103,23 +103,21 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
             }
             change.onChange();
         } catch (Exception e) {
-            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+            notificationShow(e.getMessage());
         }
     }
 
     private void delete() {
-
         try {
             long id = cat.getId();
             service.delete(id);
             change.onChange();
         } catch (Exception e) {
-            Notification.show(e.getMessage()).addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+            notificationShow(e.getMessage());
         }
     }
 
     public void editCat(Cat selectCat) {
-
         if (selectCat == null) {
             setVisible(false);
             return;
@@ -129,5 +127,26 @@ public class EditorForHomePage extends VerticalLayout implements KeyNotifier {
         binder.setBean(cat);
 
         setVisible(true);
+        cancel.focus();
+    }
+
+    public void notificationShow (String test){
+        Notification notification = new Notification();
+        notification.setPosition(com.vaadin.flow.component.notification.Notification.Position.BOTTOM_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_PRIMARY);
+        notification.setDuration(500);
+        //
+        Div divText = new Div(new Text(test));
+        //
+        Button closeButton = new Button(new Icon("lumo", "cross"));
+        closeButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY_INLINE);
+        closeButton.getElement().setAttribute("aria-label", "Close");
+        closeButton.addClickListener(event -> {
+            notification.close();
+        });
+        //
+        HorizontalLayout horizontalLayout = new HorizontalLayout(divText, closeButton);
+        notification.add(horizontalLayout);
+        notification.open();
     }
 }

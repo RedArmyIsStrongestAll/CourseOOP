@@ -5,10 +5,13 @@ import com.example.kursuch.services.ServicesCat;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.tabs.Tab;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
@@ -18,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("")
 public class HomePage extends VerticalLayout {
-
     private Grid<Cat> grid;
 
     private final ServicesCat service;
@@ -30,7 +32,6 @@ public class HomePage extends VerticalLayout {
 
     @Autowired
     public HomePage(EditorForHomePage editor, ServicesCat service){
-
         this.service = service;
 
         //setup update form

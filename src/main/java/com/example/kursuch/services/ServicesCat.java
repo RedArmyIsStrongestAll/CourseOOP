@@ -19,26 +19,30 @@ public class ServicesCat implements ServiceForCRUD<Cat>, ServiceForSearch<Cat>{
 
     @Override
     public void create(Cat obj) {
-
-        if(obj.getNameFeline() == null){
-            throw new RuntimeException("Опрометчиво думать, что у кота может не быть своего собственного кашачьего имени...");
+        if(checkNoValidityName(obj)){
+            throw new RuntimeException("Хоть одно то имя должно быть у кота");
         }
         repository.create(obj);
+
     }
 
     @Override
     public Cat read(long id) {
+        if (id == 0){
+            throw new RuntimeException("Такого кота пока нет...");
+        }
 
         Cat cat = repository.read(id);
+
         if (cat == null){
             throw new RuntimeException("Такого кота пока нет...");
         }
+
         return cat;
     }
 
     @Override
     public List<Cat> readAll() {
-
         List<Cat> cats = repository.readAll();
         if (cats == null){
             throw new RuntimeException("Нет котов!");
@@ -48,10 +52,9 @@ public class ServicesCat implements ServiceForCRUD<Cat>, ServiceForSearch<Cat>{
 
     @Override
     public void update(long id, Cat obj) {
-
         read(id);
-        if(obj.getNameFeline() == null){
-            throw new RuntimeException("Опрометчиво думать, что у кота может не быть своего собственного кашачьего имени...");
+        if(checkNoValidityName(obj)){
+            throw new RuntimeException("Хоть одно то имя должно быть у кота");
         }
         repository.update(id, obj);
     }
@@ -66,7 +69,12 @@ public class ServicesCat implements ServiceForCRUD<Cat>, ServiceForSearch<Cat>{
     public List<Cat> searchByNames(String search) {
         readAll();
         List<Cat> cats = repository.searchByNames(search);
-        System.out.println("сервис поиска: " + cats);
         return cats;
+    }
+
+    private boolean checkNoValidityName(Cat cat){
+        boolean firstName = cat.getName() != "" && cat.getName() != null;
+        boolean secondName = cat.getNameFeline() != "" && cat.getNameFeline() != null;
+        return !(firstName || secondName);
     }
 }

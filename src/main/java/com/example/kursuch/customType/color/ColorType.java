@@ -15,7 +15,7 @@ public class ColorType implements UserType {
 
     @Override
     public int[] sqlTypes() {
-        return new int[] {Types.VARCHAR};
+        return new int[]{Types.VARCHAR};
     }
 
     @Override
@@ -25,9 +25,13 @@ public class ColorType implements UserType {
 
     @Override
     public boolean equals(Object o, Object o1) throws HibernateException {
-        String first = ((Color)o).getTitle();
-        String second = ((Color)o1).getTitle();
-        return first.equals(second);
+        if (o != null && o1 != null) {
+            String first = ((Color) o).getTitle();
+            String second = ((Color) o1).getTitle();
+            return first.equals(second);
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -49,6 +53,13 @@ public class ColorType implements UserType {
 
     @Override
     public void nullSafeSet(PreparedStatement preparedStatement, Object o, int i, SharedSessionContractImplementor sharedSessionContractImplementor) throws HibernateException, SQLException {
+        Color color = (Color) o;
+        if (color == null) {
+            preparedStatement.setObject(i, null);
+        } else {
+            String title = color.getTitle();
+            preparedStatement.setString(i, title);
+        }
     }
 
     @Override
